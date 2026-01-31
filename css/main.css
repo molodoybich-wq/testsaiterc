@@ -1,0 +1,115 @@
+.amo-button {
+  display: block;
+  background-size: cover;
+  position: relative;
+  z-index: 5;
+  cursor: pointer;
+  border-radius: 50%;
+  user-select: none;
+  -moz-user-select:  none;
+}
+
+
+  .amo-button--main {
+    background: url("../img/chat1.png") 50% no-repeat;
+    background-size: 60%;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;  }
+    .amo-button--main.maincollapsed {
+      background: url("../img/close.png") 50% no-repeat;
+      box-shawdow: none;
+      background-size: 40%; }
+
+  .amo-button__iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: none;}
+  .amo-button-holder {
+    padding: 7px;
+    z-index: 9999;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+
+  .amo-button-holder *{
+    padding: 0;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+
+    .amo-button-holder.amo-vertical {
+       }
+
+.amo-brand{
+  position: absolute;
+  height: 17px;
+  bottom: 0;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: all 0.3s ease-out 0s;
+  transition: all 0.3s ease-out 0s;
+}
+.amo-brand.collapsed{
+  opacity: 1;
+  visibility: visible;
+}
+.amo-brand.amo-brand--tl {
+  transform-origin: bottom right;
+  transform: rotate(-90deg);
+}
+.amo-brand.amo-brand--tr {
+  transform-origin: top right;
+  transform: rotate(-90deg);
+}
+.amo-brand.amo-brand--br {
+  transform-origin: top left;
+  transform: rotate(-90deg);
+}
+.amo-brand.amo-brand--bl {
+  transform-origin: bottom left;
+  transform: rotate(-90deg);
+}
+
+.amo-vertical .amo-brand.collapsed {
+
+}
+.amo-brand__link-holder{
+  display: inline-block;
+  float: right;
+  white-space: nowrap;
+  font-family: 'PT Sans', Arial, sans-serif;
+  font-size: 10px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.8);
+  padding: 0 10px;
+  height: 17px;
+  background-color: rgba(181, 183, 185, 0.5);
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+}
+.amo-brand__link{
+  font-family: 'PT Sans', Arial, sans-serif;
+  font-size: 10px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none!important;
+}
+.amo-form-wrapper{
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: all .3s ease-out 0s;
+  transition: all .3s ease-out 0s;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.amo-form-wrapper_shown{
+  opacity: 1;
+  visibility: visible;
+}
