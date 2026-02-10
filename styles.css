@@ -1,4 +1,4 @@
-/* build:20260209-5 */
+/* build:20260210-2 */
 :root{
   --bg:#0b1022;
   --bg2:#070a16;
@@ -1769,75 +1769,41 @@ main.section h2{ margin-top: 26px; }
 }
 
 
-/* =========================
-   Market-style: single "Popular problems" button + modal list
-   ========================= */
-.marketProblems{
-  margin-top: 14px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.btn--problems{
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  padding: 12px 16px;
-  border-radius: 14px;
-}
-.marketProblems__hint{
-  color: rgba(255,255,255,.72);
-  font-size: 13px;
-  line-height: 1.35;
+/* ====== Step2: Market-style hero + tiles (build:20260210-2) ====== */
+.hero--market .hero__grid{ align-items:stretch; gap:22px; }
+.hero--market .hero__left{ padding-right:6px; }
+.hero--market .hero__cta{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.btn--ghost{ background:transparent; border:1px solid var(--stroke); color:var(--text); }
+.btn--ghost:hover{ border-color:rgba(255,255,255,.22); transform:translateY(-1px); }
+
+.marketTiles{ background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid var(--stroke); border-radius:22px; padding:16px; box-shadow:var(--shadow2); }
+.marketTiles__title{ font-weight:800; letter-spacing:.2px; margin:2px 0 12px; }
+.marketTiles__grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+.mTile{ display:grid; grid-template-columns:32px 1fr; gap:2px 10px; align-items:start;
+  padding:12px; border-radius:16px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.18); text-decoration:none; color:var(--text); }
+.mTile:hover{ border-color:rgba(255,255,255,.22); transform:translateY(-1px); }
+.mTile__icon{ font-size:18px; line-height:1; padding-top:2px; }
+.mTile__name{ font-weight:800; }
+.mTile__meta{ grid-column:2; color:var(--muted); font-size:12px; line-height:1.25; }
+
+.marketTiles__note{ margin-top:10px; color:var(--muted); font-size:12px; }
+
+@media (max-width: 920px){
+  .marketTiles__grid{ grid-template-columns:1fr; }
 }
 
-.problemsGrid{
-  margin-top: 12px;
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
-}
-.problemsCol{
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.10);
-  border-radius: 16px;
-  padding: 12px;
-}
-.problemsCol__title{
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: .02em;
-  color: rgba(255,255,255,.92);
-  margin-bottom: 8px;
-}
-.problemsLink{
-  display:block;
-  padding: 9px 10px;
-  border-radius: 12px;
-  color: rgba(255,255,255,.86);
-  text-decoration:none;
-  border: 1px solid transparent;
-  background: rgba(255,255,255,.02);
-  margin-bottom: 8px;
-}
-.problemsLink:hover{
-  border-color: rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-}
-.problemsLink:last-child{ margin-bottom: 0; }
+.problemsSheet{ padding:4px 2px 6px; }
+.problemsSheet__grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+.pGroup{ border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.16); border-radius:16px; padding:12px; }
+.pGroup__title{ font-weight:900; margin-bottom:8px; }
+.pLink{ display:block; padding:8px 10px; border-radius:12px; text-decoration:none; color:var(--text); border:1px solid transparent; }
+.pLink:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.10); }
+.pGroup--wide{ grid-column:1 / -1; }
+.pGroup__two{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+.problemsSheet__note{ margin-top:12px; color:var(--muted); font-size:12px; }
 
-.problemsFoot{
-  margin-top: 14px;
-  color: rgba(255,255,255,.78);
-  font-size: 13px;
-}
-.problemsFoot__cta{
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-@media (max-width: 560px){
-  .marketProblems__hint{ font-size: 12.5px; }
-  .problemsGrid{ grid-template-columns: 1fr; }
+@media (max-width: 760px){
+  .problemsSheet__grid{ grid-template-columns:1fr; }
+  .pGroup__two{ grid-template-columns:1fr; }
 }

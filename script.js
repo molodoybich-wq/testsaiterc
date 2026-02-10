@@ -210,67 +210,6 @@
     `);
   });
 
-
-  // ====== Popular problems (single button) ======
-  const openProblemsBtn = $("#openProblems");
-  if (openProblemsBtn){
-    openProblemsBtn.addEventListener("click", ()=>{
-      openUiModal(`
-        <div class="uimodal__title">Популярные проблемы</div>
-        <div class="problemsGrid">
-          <div class="problemsCol">
-            <div class="problemsCol__title">Телефоны</div>
-            <a class="problemsLink" href="razbit-ekran-telefona.html">Разбит экран</a>
-            <a class="problemsLink" href="ne-rabotaet-sensor.html">Не работает сенсор</a>
-            <a class="problemsLink" href="ne-rabotaet-dinamik.html">Не работает динамик</a>
-            <a class="problemsLink" href="ne-rabotaet-kamera.html">Не работает камера</a>
-            <a class="problemsLink" href="ne-rabotaet-mikrofon.html">Не работает микрофон</a>
-          </div>
-
-          <div class="problemsCol">
-            <div class="problemsCol__title">Телевизоры</div>
-            <a class="problemsLink" href="net-izobrazheniya-est-zvuk.html">Нет изображения, есть звук</a>
-            <a class="problemsLink" href="est-zvuk-net-izobrazheniya.html">Есть звук, нет изображения</a>
-            <a class="problemsLink" href="net-podsvetki.html">Нет подсветки</a>
-            <a class="problemsLink" href="ne-rabotaet-pult.html">Не работает пульт</a>
-            <a class="problemsLink" href="ne-rabotaet-hdmi.html">Не работает HDMI</a>
-            <a class="problemsLink" href="polosy-na-ekrane.html">Полосы на экране</a>
-          </div>
-
-          <div class="problemsCol">
-            <div class="problemsCol__title">Кофемашины</div>
-            <a class="problemsLink" href="kofemashina-ne-vklyuchaetsya.html">Не включается</a>
-            <a class="problemsLink" href="kofemashina-ne-podayet-vodu.html">Не подаёт воду</a>
-            <a class="problemsLink" href="kofemashina-ne-delaet-kofe.html">Не делает кофе</a>
-            <a class="problemsLink" href="kofemashina-protekaet.html">Протекает</a>
-            <a class="problemsLink" href="kofemashina-oshibka.html">Ошибка на дисплее</a>
-          </div>
-
-          <div class="problemsCol">
-            <div class="problemsCol__title">Принтеры / МФУ</div>
-            <a class="problemsLink" href="printer-ne-pechataet.html">Не печатает</a>
-            <a class="problemsLink" href="printer-zazhevyvaet-bumagu.html">Зажёвывает бумагу</a>
-            <a class="problemsLink" href="printer-polosit.html">Полосит</a>
-            <a class="problemsLink" href="printer-pechataet-pustye-listy.html">Печатает пустые листы</a>
-            <a class="problemsLink" href="printer-oshibka.html">Ошибка</a>
-          </div>
-
-          <div class="problemsCol">
-            <div class="problemsCol__title">Dyson</div>
-            <a class="problemsLink" href="dyson-ne-vklyuchaetsya.html">Не включается</a>
-            <a class="problemsLink" href="dyson-vyklyuchaetsya.html">Выключается</a>
-            <a class="problemsLink" href="dyson-teryaet-moshchnost.html">Теряет мощность</a>
-          </div>
-        </div>
-
-        <div class="problemsFoot">
-          Не нашли свой вариант? <a href="#lead" class="problemsFoot__cta" data-close="1">Оставить заявку</a>
-        </div>
-      `);
-    });
-  }
-
-
   // ====== Lead message builder ======
   function buildLeadMessage(formEl, extra){
     const getVal = (nameOrId) => {
@@ -944,4 +883,65 @@ function renderModelsModal(categoryKey){
   bind('.btn-tg', ()=>{ const m=buildMsg(); if(m) window.open('https://t.me/share/url?text='+encodeURIComponent(m),'_blank'); });
   bind('.btn-vk', ()=>{ const m=buildMsg(); if(m) window.open('https://vk.com/share.php?comment='+encodeURIComponent(m),'_blank'); });
   bind('.btn-max', ()=>{ const m=buildMsg(); if(m) window.open('https://max.ru','_blank'); });
+
+  // ====== Popular problems (single button -> modal) ======
+  (function bindPopularProblems(){
+    const btn = document.getElementById("openProblems");
+    if (!btn) return;
+
+    const html = `
+      <div class="uimodal__title">Популярные проблемы</div>
+      <div class="problemsSheet">
+        <div class="problemsSheet__grid">
+          <div class="pGroup">
+            <div class="pGroup__title">📱 Телефоны</div>
+            <a class="pLink" href="razbit-ekran-telefona.html">Разбит экран</a>
+            <a class="pLink" href="telefon-ne-vklyuchaetsya.html">Не включается</a>
+            <a class="pLink" href="telefon-ne-zaryazhaetsya.html">Не заряжается</a>
+            <a class="pLink" href="telefon-popala-voda.html">Попала вода</a>
+          </div>
+
+          <div class="pGroup">
+            <div class="pGroup__title">📺 Телевизоры</div>
+            <a class="pLink" href="net-podsvetki.html">Нет подсветки</a>
+            <a class="pLink" href="net-izobrazheniya-est-zvuk.html">Нет изображения, есть звук</a>
+            <a class="pLink" href="est-zvuk-net-izobrazheniya.html">Есть звук, нет изображения</a>
+            <a class="pLink" href="migaet-ekran-televizora.html">Мигает экран</a>
+          </div>
+
+          <div class="pGroup">
+            <div class="pGroup__title">☕ Кофемашины</div>
+            <a class="pLink" href="kofemashina-ne-podayet-vodu.html">Не подаёт воду</a>
+            <a class="pLink" href="kofemashina-protekaet.html">Протекает</a>
+            <a class="pLink" href="kofemashina-ne-greet.html">Не греет</a>
+            <a class="pLink" href="kofemashina-oshibka.html">Ошибка на дисплее</a>
+          </div>
+
+          <div class="pGroup">
+            <div class="pGroup__title">🖨 Принтеры</div>
+            <a class="pLink" href="printer-ne-pechataet.html">Не печатает</a>
+            <a class="pLink" href="printer-zazhevyvaet-bumagu.html">Зажёвывает бумагу</a>
+            <a class="pLink" href="printer-polosit.html">Полосит</a>
+            <a class="pLink" href="printer-oshibka.html">Ошибка / код</a>
+          </div>
+
+          <div class="pGroup pGroup--wide">
+            <div class="pGroup__title">🌪 Dyson</div>
+            <div class="pGroup__two">
+              <a class="pLink" href="dyson-ne-vklyuchaetsya.html">Не включается</a>
+              <a class="pLink" href="dyson-vyklyuchaetsya.html">Выключается</a>
+              <a class="pLink" href="dyson-teryaet-moshchnost.html">Теряет мощность</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="problemsSheet__note">
+          Нажмите на пункт — откроется страница с причинами, ценами и быстрым способом оставить заявку.
+        </div>
+      </div>
+    `;
+
+    btn.addEventListener("click", ()=> openUiModal(html));
+  })();
+
 })();
