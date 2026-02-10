@@ -884,112 +884,175 @@ function renderModelsModal(categoryKey){
   bind('.btn-vk', ()=>{ const m=buildMsg(); if(m) window.open('https://vk.com/share.php?comment='+encodeURIComponent(m),'_blank'); });
   bind('.btn-max', ()=>{ const m=buildMsg(); if(m) window.open('https://max.ru','_blank'); });
 
-  // Popular problems modal (market-style)
-  const popularData = [
-    {cat:"Телефоны", icon:"📱", title:"Разбит экран", href:"razbit-ekran-telefona.html"},
-    {cat:"Телефоны", icon:"🔋", title:"Не заряжается", href:"telefon-ne-zaryazhaetsya.html"},
-    {cat:"Телефоны", icon:"🔌", title:"Не включается", href:"telefon-ne-vklyuchaetsya.html"},
-    {cat:"Телефоны", icon:"💧", title:"После влаги", href:"telefon-popala-voda.html"},
-    {cat:"ТВ", icon:"📺", title:"Нет изображения, есть звук", href:"net-izobrazheniya-est-zvuk.html"},
-    {cat:"ТВ", icon:"📺", title:"Есть звук, нет изображения", href:"est-zvuk-net-izobrazheniya.html"},
-    {cat:"ТВ", icon:"💡", title:"Нет подсветки", href:"net-podsvetki.html"},
-    {cat:"ТВ", icon:"📶", title:"Не показывает каналы", href:"ne-pokazyvaet-kanaly.html"},
-    {cat:"ТВ", icon:"🧩", title:"Мигает экран", href:"migaet-ekran-televizora.html"},
-    {cat:"Кофемашины", icon:"☕", title:"Не включается", href:"kofemashina-ne-vklyuchaetsya.html"},
-    {cat:"Кофемашины", icon:"💧", title:"Не подаёт воду", href:"kofemashina-ne-podayet-vodu.html"},
-    {cat:"Кофемашины", icon:"🌡️", title:"Не греет", href:"kofemashina-ne-greet.html"},
-    {cat:"Кофемашины", icon:"🧯", title:"Протекает", href:"kofemashina-protekaet.html"},
-    {cat:"Кофемашины", icon:"⚠️", title:"Ошибка на дисплее", href:"kofemashina-oshibka.html"},
-    {cat:"Принтеры", icon:"🖨️", title:"Не печатает", href:"printer-ne-pechataet.html"},
-    {cat:"Принтеры", icon:"📄", title:"Печатает пустые листы", href:"printer-pechataet-pustye-listy.html"},
-    {cat:"Принтеры", icon:"📥", title:"Не берёт бумагу", href:"printer-zazhevyvaet-bumagu.html"},
-    {cat:"Dyson", icon:"🌀", title:"Не включается", href:"dyson-ne-vklyuchaetsya.html"},
-    {cat:"Dyson", icon:"🌀", title:"Теряет мощность", href:"dyson-teryaet-moshchnost.html"},
-    {cat:"Dyson", icon:"🌀", title:"Выключается", href:"dyson-vyklyuchaetsya.html"},
-  ].filter(i => !!i.href);
+  // ===== Step 5: Quick estimate + Problems modal =====
+  const encode = (s) => encodeURIComponent(String(s || ""));
+  const buildEstimateText = () => {
+    const form = document.getElementById("quickEstimate");
+    if (!form) return "";
+    const cat = form.getAttribute("data-cat") || "Телефон";
+    const model = (form.querySelector('[name="model"]')?.value || "").trim();
+    const issue = (form.querySelector('[name="issue"]')?.value || "").trim();
+    const parts = [];
+    parts.push(`Заявка с сайта: ${cat}`);
+    if (model) parts.push(`Модель: ${model}`);
+    if (issue) parts.push(`Проблема: ${issue}`);
+    parts.push("Адрес: Ткачева 22");
+    return parts.join("\n");
+  };
 
-  const cats = ["Все","Телефоны","ТВ","Кофемашины","Принтеры","Dyson"];
+  // Tabs for quick estimate
+  (() => {
+    const tabs = Array.from(document.querySelectorAll(".estTab"));
+    const form = document.getElementById("quickEstimate");
+    if (!tabs.length || !form) return;
 
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-  }
-
-  function renderPopularList(activeCat, q){
-    const query = (q||"").trim().toLowerCase();
-    const rows = popularData
-      .filter(item => {
-        const catOk = (activeCat==="Все") || (item.cat===activeCat);
-        const qOk = !query || (item.title.toLowerCase().includes(query) || item.cat.toLowerCase().includes(query));
-        return catOk && qOk;
-      })
-      .map(item => `
-        <a class="pitem" href="${escapeHtml(item.href)}">
-          <span class="pitem__icon">${escapeHtml(item.icon)}</span>
-          <span class="pitem__text">
-            <span class="pitem__title">${escapeHtml(item.title)}</span>
-            <span class="pitem__meta">${escapeHtml(item.cat)}</span>
-          </span>
-          <span class="pitem__chev">›</span>
-        </a>
-      `).join("");
-
-    return rows || `<div class="pempty">Ничего не найдено. Попробуй другой запрос.</div>`;
-  }
-
-  function openPopularModal(){
-    const tabs = cats.map(c=>`<button class="ptab" type="button" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("");
-    const html = `
-      <div class="pmodal">
-        <div class="pmodal__head">
-          <div>
-            <div class="pmodal__title">Популярные проблемы</div>
-            <div class="pmodal__sub">Выбери категорию или введи запрос — откроется нужная страница</div>
-          </div>
-        </div>
-        <div class="pmodal__search">
-          <input id="pSearch" type="search" placeholder="Напр.: не включается / экран / подсветка / вода" autocomplete="off">
-        </div>
-        <div class="ptabs" role="tablist">${tabs}</div>
-        <div id="pList" class="plist">${renderPopularList("Все","")}</div>
-      </div>
-    `;
-    openUiModal(html);
-
-    // set default tab active
-    const content = document.getElementById("uiModalContent");
-    if (!content) return;
-    const setActive = (cat)=>{
-      content.querySelectorAll(".ptab").forEach(b=>b.classList.toggle("active", b.dataset.cat===cat));
-      const q = (content.querySelector("#pSearch")||{}).value || "";
-      const list = content.querySelector("#pList");
-      if (list) list.innerHTML = renderPopularList(cat, q);
+    const CAT = {
+      phone: { label: "Телефон", modelPH: "Например: iPhone 13 / Redmi Note", issuePH: "Разбит экран, не включается, не работает звук…" },
+      pc: { label: "ПК/Ноутбук", modelPH: "Например: ASUS / HP / Lenovo", issuePH: "Не включается, шумит, перегревается, Windows…" },
+      tv: { label: "ТВ", modelPH: "Например: LG 55 / Samsung / Konka", issuePH: "Нет изображения, полосы, нет подсветки…" },
+      coffee: { label: "Кофемашина", modelPH: "Например: DeLonghi / Philips / Saeco", issuePH: "Не подаёт воду, протекает, ошибка…" },
+      printer: { label: "Принтер", modelPH: "Например: HP / Canon / Epson", issuePH: "Не печатает, полосит, зажёвывает бумагу…" },
+      dyson: { label: "Dyson", modelPH: "Например: V10 / V11 / Airwrap", issuePH: "Не включается, теряет мощность, выключается…" },
     };
 
-    setActive("Все");
-
-    content.addEventListener("click", (e)=>{
-      const b = e.target.closest(".ptab");
-      if (!b) return;
-      setActive(b.dataset.cat || "Все");
-    }, { once:false });
-
-    const input = content.querySelector("#pSearch");
-    if (input){
-      let cat = "Все";
-      input.addEventListener("input", ()=>{
-        // keep current active cat
-        const active = content.querySelector(".ptab.active");
-        cat = (active && active.dataset.cat) ? active.dataset.cat : "Все";
-        const list = content.querySelector("#pList");
-        if (list) list.innerHTML = renderPopularList(cat, input.value);
+    const setCat = (key) => {
+      const cfg = CAT[key] || CAT.phone;
+      form.setAttribute("data-cat", cfg.label);
+      const model = form.querySelector('[name="model"]');
+      const issue = form.querySelector('[name="issue"]');
+      if (model) model.setAttribute("placeholder", cfg.modelPH);
+      if (issue) issue.setAttribute("placeholder", cfg.issuePH);
+      tabs.forEach((t) => {
+        const isActive = t.dataset.cat === key;
+        t.classList.toggle("is-active", isActive);
+        t.setAttribute("aria-selected", isActive ? "true" : "false");
       });
-      setTimeout(()=>{ try{ input.focus(); }catch(_e){} }, 50);
-    }
-  }
+    };
 
-  const openPopularBtn = document.getElementById("openPopular");
-  if (openPopularBtn){
-    openPopularBtn.addEventListener("click", openPopularModal);
-  }
+    tabs.forEach((t) => t.addEventListener("click", () => setCat(t.dataset.cat)));
+    setCat("phone");
+
+    // Prefill share to Telegram from quick estimate
+    const qeTg = document.getElementById("qeTg");
+    if (qeTg) {
+      qeTg.addEventListener("click", (e) => {
+        const text = buildEstimateText();
+        if (!text) return;
+        e.preventDefault();
+        const url = `https://t.me/share/url?text=${encode(text)}`;
+        window.open(url, "_blank");
+      });
+    }
+  })();
+
+  // Problems modal
+  (() => {
+    const modal = document.getElementById("problemsModal");
+    const list = document.getElementById("pmList");
+    const input = document.getElementById("pmSearchInput");
+    const openers = Array.from(document.querySelectorAll('[data-open-problems="1"]'));
+    const tabs = Array.from(document.querySelectorAll(".pmTab"));
+
+    if (!modal || !list || !openers.length) return;
+
+    const PROBLEMS = {
+      phone: [
+        { t: "Разбит экран", s: "замена дисплея/стекла", href: "razbit-ekran.html" },
+        { t: "Не работает сенсор", s: "тачскрин/контакты", href: "ne-rabotaet-sensor.html" },
+        { t: "Не работает камера", s: "модуль/шлейф", href: "ne-rabotaet-kamera.html" },
+        { t: "Не работает динамик", s: "хрип/тишина", href: "ne-rabotaet-dinamik.html" },
+        { t: "Не работает микрофон", s: "связь/запись", href: "ne-rabotaet-mikrofon.html" },
+      ],
+      tv: [
+        { t: "Нет изображения", s: "есть звук / нет картинки", href: "net-izobrazheniya-est-zvuk.html" },
+        { t: "Есть звук, нет изображения", s: "подсветка/плата", href: "est-zvuk-net-izobrazheniya.html" },
+        { t: "Нет подсветки", s: "замена подсветки", href: "net-podsvetki.html" },
+        { t: "Полосы на экране", s: "матрица/шлейфы", href: "polosy-na-ekrane.html" },
+        { t: "Мигает экран", s: "питание/подсветка", href: "migaet-ekran-televizora.html" },
+        { t: "Не работает HDMI", s: "разъём/плата", href: "ne-rabotaet-hdmi.html" },
+        { t: "Не работает пульт", s: "ИК/плата", href: "ne-rabotaet-pult.html" },
+      ],
+      coffee: [
+        { t: "Не включается", s: "питание/плата", href: "kofemashina-ne-vklyuchaetsya.html" },
+        { t: "Не подаёт воду", s: "помпа/засор", href: "kofemashina-ne-podayet-vodu.html" },
+        { t: "Протекает", s: "уплотнения/патрубки", href: "kofemashina-protekaet.html" },
+        { t: "Ошибка на дисплее", s: "диагностика/сброс", href: "kofemashina-oshibka.html" },
+        { t: "Слабый напор", s: "декальцинация/засор", href: "kofemashina-slabyy-napor.html" },
+        { t: "Не греет", s: "термоблок/датчики", href: "kofemashina-ne-greet.html" },
+      ],
+      printer: [
+        { t: "Не печатает", s: "драйвер/узлы", href: "printer-ne-pechataet.html" },
+        { t: "Печатает пустые листы", s: "чернила/головка", href: "printer-pechataet-pustye-listy.html" },
+        { t: "Полосит", s: "прочистка/головка", href: "printer-polosit.html" },
+        { t: "Зажёвывает бумагу", s: "ролики/датчики", href: "printer-zazhevyvaet-bumagu.html" },
+        { t: "Не включается", s: "питание", href: "printer-ne-vklyuchaetsya.html" },
+        { t: "Компьютер не видит", s: "USB/сеть", href: "printer-ne-viden-kompyuteru.html" },
+      ],
+      dyson: [
+        { t: "Не включается", s: "аккумулятор/плата", href: "dyson-ne-vklyuchaetsya.html" },
+        { t: "Теряет мощность", s: "фильтры/двигатель", href: "dyson-teryaet-moshchnost.html" },
+        { t: "Выключается", s: "перегрев/контакты", href: "dyson-vyklyuchaetsya.html" },
+      ],
+    };
+
+    let activeCat = "phone";
+
+    const render = () => {
+      const q = (input?.value || "").trim().toLowerCase();
+      const all = Object.entries(PROBLEMS).flatMap(([cat, items]) =>
+        items.map((it) => ({ ...it, cat }))
+      );
+
+      const source = q
+        ? all.filter((it) => (it.t + " " + it.s).toLowerCase().includes(q))
+        : (PROBLEMS[activeCat] || []);
+
+      list.innerHTML = source
+        .map(
+          (it) => `
+          <a class="pmItem" href="${it.href}">
+            <div>
+              <div class="pmItem__t">${it.t}</div>
+              <div class="pmItem__s">${it.s}</div>
+            </div>
+            <div class="pmItem__s">→</div>
+          </a>`
+        )
+        .join("");
+    };
+
+    const setOpen = (open) => {
+      modal.classList.toggle("is-open", !!open);
+      modal.setAttribute("aria-hidden", open ? "false" : "true");
+      document.body.classList.toggle("menu-open", !!open);
+      if (open) {
+        setTimeout(() => input?.focus(), 20);
+        render();
+      }
+    };
+
+    openers.forEach((b) => b.addEventListener("click", () => setOpen(true)));
+    modal.addEventListener("click", (e) => {
+      if (e.target && e.target.closest && e.target.closest('[data-close-problems="1"]')) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) setOpen(false);
+    });
+
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => {
+        activeCat = t.dataset.pmCat || "phone";
+        tabs.forEach((x) => {
+          const on = x === t;
+          x.classList.toggle("is-active", on);
+          x.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        if (input) input.value = "";
+        render();
+      })
+    );
+
+    input?.addEventListener("input", render);
+  })();
 
 })();
