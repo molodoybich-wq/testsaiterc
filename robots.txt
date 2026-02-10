@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Убираем дубляж параметров (Яндекс)
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&utm_referrer&yclid&gclid /
+
+Sitemap: https://vremonte61.online/sitemap.xml
+Host: vremonte61.online
