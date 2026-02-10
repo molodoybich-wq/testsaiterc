@@ -884,64 +884,112 @@ function renderModelsModal(categoryKey){
   bind('.btn-vk', ()=>{ const m=buildMsg(); if(m) window.open('https://vk.com/share.php?comment='+encodeURIComponent(m),'_blank'); });
   bind('.btn-max', ()=>{ const m=buildMsg(); if(m) window.open('https://max.ru','_blank'); });
 
-  // ====== Popular problems (single button -> modal) ======
-  (function bindPopularProblems(){
-    const btn = document.getElementById("openProblems");
-    if (!btn) return;
+  // Popular problems modal (market-style)
+  const popularData = [
+    {cat:"Телефоны", icon:"📱", title:"Разбит экран", href:"razbit-ekran-telefona.html"},
+    {cat:"Телефоны", icon:"🔋", title:"Не заряжается", href:"telefon-ne-zaryazhaetsya.html"},
+    {cat:"Телефоны", icon:"🔌", title:"Не включается", href:"telefon-ne-vklyuchaetsya.html"},
+    {cat:"Телефоны", icon:"💧", title:"После влаги", href:"telefon-popala-voda.html"},
+    {cat:"ТВ", icon:"📺", title:"Нет изображения, есть звук", href:"net-izobrazheniya-est-zvuk.html"},
+    {cat:"ТВ", icon:"📺", title:"Есть звук, нет изображения", href:"est-zvuk-net-izobrazheniya.html"},
+    {cat:"ТВ", icon:"💡", title:"Нет подсветки", href:"net-podsvetki.html"},
+    {cat:"ТВ", icon:"📶", title:"Не показывает каналы", href:"ne-pokazyvaet-kanaly.html"},
+    {cat:"ТВ", icon:"🧩", title:"Мигает экран", href:"migaet-ekran-televizora.html"},
+    {cat:"Кофемашины", icon:"☕", title:"Не включается", href:"kofemashina-ne-vklyuchaetsya.html"},
+    {cat:"Кофемашины", icon:"💧", title:"Не подаёт воду", href:"kofemashina-ne-podayet-vodu.html"},
+    {cat:"Кофемашины", icon:"🌡️", title:"Не греет", href:"kofemashina-ne-greet.html"},
+    {cat:"Кофемашины", icon:"🧯", title:"Протекает", href:"kofemashina-protekaet.html"},
+    {cat:"Кофемашины", icon:"⚠️", title:"Ошибка на дисплее", href:"kofemashina-oshibka.html"},
+    {cat:"Принтеры", icon:"🖨️", title:"Не печатает", href:"printer-ne-pechataet.html"},
+    {cat:"Принтеры", icon:"📄", title:"Печатает пустые листы", href:"printer-pechataet-pustye-listy.html"},
+    {cat:"Принтеры", icon:"📥", title:"Не берёт бумагу", href:"printer-zazhevyvaet-bumagu.html"},
+    {cat:"Dyson", icon:"🌀", title:"Не включается", href:"dyson-ne-vklyuchaetsya.html"},
+    {cat:"Dyson", icon:"🌀", title:"Теряет мощность", href:"dyson-teryaet-moshchnost.html"},
+    {cat:"Dyson", icon:"🌀", title:"Выключается", href:"dyson-vyklyuchaetsya.html"},
+  ].filter(i => !!i.href);
 
+  const cats = ["Все","Телефоны","ТВ","Кофемашины","Принтеры","Dyson"];
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  }
+
+  function renderPopularList(activeCat, q){
+    const query = (q||"").trim().toLowerCase();
+    const rows = popularData
+      .filter(item => {
+        const catOk = (activeCat==="Все") || (item.cat===activeCat);
+        const qOk = !query || (item.title.toLowerCase().includes(query) || item.cat.toLowerCase().includes(query));
+        return catOk && qOk;
+      })
+      .map(item => `
+        <a class="pitem" href="${escapeHtml(item.href)}">
+          <span class="pitem__icon">${escapeHtml(item.icon)}</span>
+          <span class="pitem__text">
+            <span class="pitem__title">${escapeHtml(item.title)}</span>
+            <span class="pitem__meta">${escapeHtml(item.cat)}</span>
+          </span>
+          <span class="pitem__chev">›</span>
+        </a>
+      `).join("");
+
+    return rows || `<div class="pempty">Ничего не найдено. Попробуй другой запрос.</div>`;
+  }
+
+  function openPopularModal(){
+    const tabs = cats.map(c=>`<button class="ptab" type="button" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("");
     const html = `
-      <div class="uimodal__title">Популярные проблемы</div>
-      <div class="problemsSheet">
-        <div class="problemsSheet__grid">
-          <div class="pGroup">
-            <div class="pGroup__title">📱 Телефоны</div>
-            <a class="pLink" href="razbit-ekran-telefona.html">Разбит экран</a>
-            <a class="pLink" href="telefon-ne-vklyuchaetsya.html">Не включается</a>
-            <a class="pLink" href="telefon-ne-zaryazhaetsya.html">Не заряжается</a>
-            <a class="pLink" href="telefon-popala-voda.html">Попала вода</a>
-          </div>
-
-          <div class="pGroup">
-            <div class="pGroup__title">📺 Телевизоры</div>
-            <a class="pLink" href="net-podsvetki.html">Нет подсветки</a>
-            <a class="pLink" href="net-izobrazheniya-est-zvuk.html">Нет изображения, есть звук</a>
-            <a class="pLink" href="est-zvuk-net-izobrazheniya.html">Есть звук, нет изображения</a>
-            <a class="pLink" href="migaet-ekran-televizora.html">Мигает экран</a>
-          </div>
-
-          <div class="pGroup">
-            <div class="pGroup__title">☕ Кофемашины</div>
-            <a class="pLink" href="kofemashina-ne-podayet-vodu.html">Не подаёт воду</a>
-            <a class="pLink" href="kofemashina-protekaet.html">Протекает</a>
-            <a class="pLink" href="kofemashina-ne-greet.html">Не греет</a>
-            <a class="pLink" href="kofemashina-oshibka.html">Ошибка на дисплее</a>
-          </div>
-
-          <div class="pGroup">
-            <div class="pGroup__title">🖨 Принтеры</div>
-            <a class="pLink" href="printer-ne-pechataet.html">Не печатает</a>
-            <a class="pLink" href="printer-zazhevyvaet-bumagu.html">Зажёвывает бумагу</a>
-            <a class="pLink" href="printer-polosit.html">Полосит</a>
-            <a class="pLink" href="printer-oshibka.html">Ошибка / код</a>
-          </div>
-
-          <div class="pGroup pGroup--wide">
-            <div class="pGroup__title">🌪 Dyson</div>
-            <div class="pGroup__two">
-              <a class="pLink" href="dyson-ne-vklyuchaetsya.html">Не включается</a>
-              <a class="pLink" href="dyson-vyklyuchaetsya.html">Выключается</a>
-              <a class="pLink" href="dyson-teryaet-moshchnost.html">Теряет мощность</a>
-            </div>
+      <div class="pmodal">
+        <div class="pmodal__head">
+          <div>
+            <div class="pmodal__title">Популярные проблемы</div>
+            <div class="pmodal__sub">Выбери категорию или введи запрос — откроется нужная страница</div>
           </div>
         </div>
-
-        <div class="problemsSheet__note">
-          Нажмите на пункт — откроется страница с причинами, ценами и быстрым способом оставить заявку.
+        <div class="pmodal__search">
+          <input id="pSearch" type="search" placeholder="Напр.: не включается / экран / подсветка / вода" autocomplete="off">
         </div>
+        <div class="ptabs" role="tablist">${tabs}</div>
+        <div id="pList" class="plist">${renderPopularList("Все","")}</div>
       </div>
     `;
+    openUiModal(html);
 
-    btn.addEventListener("click", ()=> openUiModal(html));
-  })();
+    // set default tab active
+    const content = document.getElementById("uiModalContent");
+    if (!content) return;
+    const setActive = (cat)=>{
+      content.querySelectorAll(".ptab").forEach(b=>b.classList.toggle("active", b.dataset.cat===cat));
+      const q = (content.querySelector("#pSearch")||{}).value || "";
+      const list = content.querySelector("#pList");
+      if (list) list.innerHTML = renderPopularList(cat, q);
+    };
+
+    setActive("Все");
+
+    content.addEventListener("click", (e)=>{
+      const b = e.target.closest(".ptab");
+      if (!b) return;
+      setActive(b.dataset.cat || "Все");
+    }, { once:false });
+
+    const input = content.querySelector("#pSearch");
+    if (input){
+      let cat = "Все";
+      input.addEventListener("input", ()=>{
+        // keep current active cat
+        const active = content.querySelector(".ptab.active");
+        cat = (active && active.dataset.cat) ? active.dataset.cat : "Все";
+        const list = content.querySelector("#pList");
+        if (list) list.innerHTML = renderPopularList(cat, input.value);
+      });
+      setTimeout(()=>{ try{ input.focus(); }catch(_e){} }, 50);
+    }
+  }
+
+  const openPopularBtn = document.getElementById("openPopular");
+  if (openPopularBtn){
+    openPopularBtn.addEventListener("click", openPopularModal);
+  }
 
 })();
